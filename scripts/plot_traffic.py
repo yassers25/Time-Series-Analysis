@@ -1,4 +1,3 @@
-# plot_demo.py
 """Plot recent hourly traffic and the full selected history of daily traffic."""
 
 from datetime import timedelta, timezone
@@ -11,7 +10,9 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter, MaxNLocator
 import pandas as pd
 
-OUTPUT_DIR = Path(__file__).resolve().parent / "outputs"
+BASE_DIR = Path(__file__).resolve().parents[1]
+TABLES_DIR = BASE_DIR / "outputs" / "tables"
+OUTPUT_DIR = BASE_DIR / "outputs" / "figures"
 MAX_PLOT_DAYS = 14  # Hourly detail only. The daily overview always uses the full CSV.
 JST = timezone(timedelta(hours=9), name="JST")
 LABELS = {"wp": "WordPress (wp)", "doktor": "Doktor"}
@@ -128,6 +129,6 @@ def plot_daily(daily: pd.DataFrame, output_dir: Path = OUTPUT_DIR):
 
 
 if __name__ == "__main__":
-    paths = plot_hourly(pd.read_csv(OUTPUT_DIR / "hourly.csv")) + plot_daily(pd.read_csv(OUTPUT_DIR / "daily.csv"))
+    paths = plot_hourly(pd.read_csv(TABLES_DIR / "hourly.csv")) + plot_daily(pd.read_csv(TABLES_DIR / "daily.csv"))
     for path in paths:
         print(f"Saved {path.resolve()}")

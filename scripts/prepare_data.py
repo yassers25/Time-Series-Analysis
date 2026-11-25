@@ -1,4 +1,3 @@
-# prepare_data.py
 """Read extracted CDSL access logs, audit each file, and build hourly/daily CSVs."""
 
 from __future__ import annotations
@@ -14,7 +13,7 @@ import numpy as np
 import pandas as pd
 
 
-BASE_DIR = Path(__file__).resolve().parent
+BASE_DIR = Path(__file__).resolve().parents[1]
 DATA_DIR = BASE_DIR / "data"
 OUTPUT_DIR = BASE_DIR / "outputs"
 SERVICES = ("wp", "doktor")
@@ -140,14 +139,17 @@ def prepare(data_dir: Path = DATA_DIR, output_dir: Path = OUTPUT_DIR,
     print(f"Archive month folders found: {found}/{len(ARCHIVE_MONTHS)} expected (202304 to 202602).")
     if found < len(ARCHIVE_MONTHS):
         print("Processing available input only; months.csv identifies absent folders.")
-    output_dir.mkdir(parents=True, exist_ok=True)
+    audit_dir = output_dir / "audit"
+    tables_dir = output_dir / "tables"
+    audit_dir.mkdir(parents=True, exist_ok=True)
+    tables_dir.mkdir(parents=True, exist_ok=True)
     if not files:
         empty = pd.DataFrame(columns=["folder_month", "duplicate_of", "first_event_local",
                                       "last_event_local", "parsed_records", "records_used"])
-        _write_months(output_dir, folders, file_counts, empty)
+        _write_months(audit_dir, folders, file_counts, empty)
         raise FileNotFoundError(f"No selected-service access logs found under {data_dir}")
     hours, seen_files, audit_rows = defaultdict(_new_hour), {}, []
-    errors_path = output_dir / "parse_errors.csv"
+    errors_path = audit_dir / "parse_errors.csv"
     failures = 0
     with errors_path.open("w", encoding="utf-8", newline="") as error_file:
         errors = csv.DictWriter(error_file, fieldnames=["file", "line_number", "reason", "raw_line"])
@@ -216,8 +218,8 @@ def prepare(data_dir: Path = DATA_DIR, output_dir: Path = OUTPUT_DIR,
     if not failures:
         errors_path.unlink()
     audit = pd.DataFrame(audit_rows)
-    audit.to_csv(output_dir / "audit.csv", index=False)
-    _write_months(output_dir, folders, file_counts, audit)
+    audit.to_csv(audit_dir / "audit.csv", index=False)
+    _write_months(audit_dir, folders, file_counts, audit)
     if not hours:
         raise ValueError("No records matched. audit.csv was written; hourly/daily CSVs were not regenerated.")
 
@@ -240,7 +242,7 @@ def prepare(data_dir: Path = DATA_DIR, output_dir: Path = OUTPUT_DIR,
             _fractions(row)
             hourly_rows.append(row)
     hourly = pd.DataFrame(hourly_rows)
-    hourly.to_csv(output_dir / "hourly.csv", index=False)
+    hourly.to_csv(tables_dir / "hourly.csv", index=False)
     daily_rows = []
     for (service, day), group in hourly.groupby(["service", hourly["time_local"].str[:10]], sort=False):
         observed = int(group["has_events"].sum())
@@ -251,7 +253,7 @@ def prepare(data_dir: Path = DATA_DIR, output_dir: Path = OUTPUT_DIR,
         _fractions(row)
         daily_rows.append(row)
     daily = pd.DataFrame(daily_rows)
-    daily.to_csv(output_dir / "daily.csv", index=False)
+    daily.to_csv(tables_dir / "daily.csv", index=False)
     unique_files = audit["duplicate_of"].eq("")
     print(f"Selected records: {int(audit['records_used'].sum()):,}; hourly rows: {len(hourly):,}")
     print(f"Files audited: {len(audit)}; exact duplicate files skipped: {int((~unique_files).sum())}; parse failures: {failures}")
