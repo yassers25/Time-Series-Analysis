@@ -12,12 +12,14 @@ cdsl_demo/
     plot_traffic.py              Plot hourly and daily traffic
   notebooks/
     data_exploration.ipynb        Interactive exploration
-    missing_observations.ipynb    Investigate gaps using coverage and file dates
+  tests/
+    test_prepare_data.py         Regression check for service-specific start dates
   outputs/
     tables/                      Hourly and daily time series
     audit/                       File audit, quality report and supporting tables
     figures/                     PNG and PDF plots
   .gitignore
+  requirements.txt               Pinned analysis and modelling dependencies
   README.md
 ```
 
@@ -31,10 +33,11 @@ Keep the original monthly folders directly under `data/`. Each contains daily
 
 ## Run
 
-Use Python 3.10 or newer with NumPy, pandas and Matplotlib installed.
+Use Python 3.11 or newer. The dependency versions are recorded in `requirements.txt`.
 From the project root, run these commands in order:
 
 ```powershell
+python -m pip install -r requirements.txt
 python scripts/prepare_data.py
 python scripts/audit_quality.py
 python scripts/plot_traffic.py
@@ -55,9 +58,19 @@ The first notebook also answers the five Step 1 archive and preparation question
 with timestamp samples, duplicate and parsing evidence, and the cleaning policy.
 Its written findings describe wp; changing `service` changes the series cells only.
 
-Use `notebooks/missing_observations.ipynb` to plot missing hours, inspect a
-selected gap against the file audit, and compare coverage between services.
-Start with the longest wp gap; change `gap_number` to inspect another interval.
+Each service starts on its first recorded event day unless `START_DATE` is set
+explicitly. The wp series starts on 2 April 2023. The previous shared grid added
+four artificial missing days to wp because a stale doktor log started on 29 March.
+
+The notebook discusses the missing records on 19–21 December 2025, which fall
+in the intended test period. Exact split dates and model evaluation are not
+implemented yet.
+
+The preparation regression check runs with:
+
+```powershell
+python -m unittest discover -s tests -v
+```
 
 ## Output
 

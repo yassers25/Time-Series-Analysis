@@ -211,6 +211,15 @@ def main(output=OUTPUT):
                       f"{int(original['parsed_records']):,} parsed records in the original, "
                       f"events {original['first_event_local']} to {original['last_event_local']}.")
     report.append("")
+    report.extend(["## wp coverage corrections and December gap", "",
+                   "The wp series starts on 2 April 2023, its first day with recorded events. "
+                   "The former shared grid started on 29 March because a stale doktor snapshot contained events from that date. "
+                   "Removing those four days removes 96 artificial unknown hours from wp, without removing any requests.", "",
+                   "Both services have no records from 19 through 21 December 2025 (72 hours). "
+                   "This gap lies in the intended test period. Its counts remain unknown; "
+                   "no forecast error can be calculated against missing observations. "
+                   "Test scores will require the number of observed and excluded dates to be reported. "
+                   "Exact split dates and forecasting evaluation have not yet been implemented.", ""])
     report.extend(["## Service selection for this study", "",
                    "Use **wp as the main series** for exploratory analysis and forecasting. "
                    "Keep **doktor as a secondary comparison** over a usable period, mainly from March 2025 onward. "
@@ -222,7 +231,7 @@ def main(output=OUTPUT):
                    "| rudder | Internal lab introduction website protected by Google Account SSO | Excluded from the main forecasting study |", "",
                    "Service descriptions: [dataset documentation](https://github.com/cdsl-research/website-access-logs-public#services).", "",
                    "The audited wp series has a longer usable history, more requests and fewer unknown hours "
-                   "than doktor on the shared time grid (see the service totals above). "
+                   "than doktor over their respective exported date ranges (see the service totals above). "
                    "Much of doktor's early archive repeats the same 66-request log from 29 March 2023; "
                    "the next unique log begins on 8 March 2025. "
                    "The full-grid unknown-hour percentage therefore also reflects different periods of usable coverage.", "",
@@ -241,6 +250,9 @@ def main(output=OUTPUT):
                    "Exact-duplicate checks use existing audit hashes. Source files were not rehashed or reparsed. "
                    "Partially overlapping files are not deduplicated by the preparation script. "
                    "Repeated requests cannot safely be deleted merely because timestamps or lines match.", "",
+                   "The local log files use Windows line endings (CRLF). Their byte sizes and SHA-256 hashes "
+                   "therefore differ from the original LF files, while request counts are unchanged. "
+                   "The audit describes the local copies.", "",
                    "See quality_checks.csv for failed consistency checks, missing_intervals.csv for all gaps, "
                    "date_mismatches.csv for folder/date differences, overlapping_ranges.csv for timestamp overlap candidates, "
                    "and quality_summary.csv for service totals.", ""])

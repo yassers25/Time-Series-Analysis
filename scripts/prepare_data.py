@@ -110,6 +110,7 @@ def prepare(data_dir: Path = DATA_DIR, output_dir: Path = OUTPUT_DIR,
     """Scan every selected-service file; filter records by event time, not folder name.
 
     Identical files count once per service. Repeated lines remain requests.
+    Without an explicit start date, each service starts on its first event day.
     Empty hours are unknown; daily totals require a record in every hour.
     """
     data_dir, output_dir = Path(data_dir).resolve(), Path(output_dir).resolve()
@@ -226,9 +227,13 @@ def prepare(data_dir: Path = DATA_DIR, output_dir: Path = OUTPUT_DIR,
     first_hour, last_hour = min(key[1] for key in hours), max(key[1] for key in hours)
     grid_start = start or first_hour.astimezone(JST).replace(hour=0).astimezone(UTC)
     grid_end = end or (last_hour.astimezone(JST).replace(hour=0) + timedelta(days=1)).astimezone(UTC)
-    grid = pd.date_range(grid_start, grid_end, freq="h", inclusive="left")
     hourly_rows = []
     for service in services:
+        service_times = [time for name, time in hours if name == service]
+        service_start = grid_start
+        if start is None and service_times:
+            service_start = min(service_times).astimezone(JST).replace(hour=0).astimezone(UTC)
+        grid = pd.date_range(service_start, grid_end, freq="h", inclusive="left")
         for timestamp in grid:
             values = hours.get((service, timestamp.to_pydatetime()))
             present = values is not None

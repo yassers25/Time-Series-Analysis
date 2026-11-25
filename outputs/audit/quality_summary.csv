@@ -1,3 +1,3 @@
 service,unique_files,duplicate_files,records_used,duplicate_parsed_records,parse_errors,first_grid_hour,last_grid_hour,total_hours,unknown_hours,unknown_percent,internal_unknown_hours,complete_days,partial_days,empty_days
 doktor,292,331,507309,21846,0,2023-03-29T00:00:00+09:00,2026-02-03T23:00:00+09:00,25032,18017,71.98,18016,291,2,750
-wp,952,1,4779893,7071,0,2023-03-29T00:00:00+09:00,2026-02-03T23:00:00+09:00,25032,2183,8.72,2087,952,1,90
+wp,952,1,4779893,7071,0,2023-04-02T00:00:00+09:00,2026-02-03T23:00:00+09:00,24936,2087,8.37,2087,952,1,86

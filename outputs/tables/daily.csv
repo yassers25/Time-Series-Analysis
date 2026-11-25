@@ -1,8 +1,4 @@
 service,date_local,hours_with_events,expected_hours,unknown_hours,requests_recorded,requests,monitor_requests,other_requests,declared_bot_requests,status_1xx,status_2xx,status_3xx,status_4xx,status_5xx,status_other,bytes_sent,missing_byte_values,nonstandard_requests,monitor_fraction,status_4xx_fraction,status_5xx_fraction
-wp,2023-03-29,0,24,24,0,,,,,,,,,,,,,,,,
-wp,2023-03-30,0,24,24,0,,,,,,,,,,,,,,,,
-wp,2023-03-31,0,24,24,0,,,,,,,,,,,,,,,,
-wp,2023-04-01,0,24,24,0,,,,,,,,,,,,,,,,
 wp,2023-04-02,24,24,0,7071,7071.0,576.0,6495.0,1120.0,0.0,5248.0,496.0,1327.0,0.0,0.0,125573604.0,0.0,13.0,0.08145948239287229,0.18766793947107904,0.0
 wp,2023-04-03,24,24,0,10837,10837.0,576.0,10261.0,1224.0,0.0,10256.0,525.0,56.0,0.0,0.0,137574200.0,0.0,7.0,0.0531512411183907,0.0051674817753990954,0.0
 wp,2023-04-04,24,24,0,8202,8202.0,576.0,7626.0,1184.0,0.0,7637.0,506.0,59.0,0.0,0.0,113306933.0,0.0,6.0,0.07022677395757132,0.007193367471348452,0.0
